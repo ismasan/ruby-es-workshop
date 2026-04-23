@@ -2,7 +2,7 @@
 
 require_relative './domain'
 
-class Cart < Struct.new(:status, :booking_id, :showing_id, :seats, keyword_init: true)
+class Booking < Struct.new(:status, :booking_id, :showing_id, :seats, keyword_init: true)
   Seat = Struct.new(:id, :price)
 
   def self.build
@@ -16,19 +16,19 @@ class Cart < Struct.new(:status, :booking_id, :showing_id, :seats, keyword_init:
   def total = seats.values.sum(&:price)
 end
 
-def evolve(cart, event)
+def evolve(booking, event)
   case event
   when BookingStarted
-    cart.status = :started
-    cart.booking_id = event.booking_id
-    cart.showing_id = event.showing_id
+    booking.status = :started
+    booking.booking_id = event.booking_id
+    booking.showing_id = event.showing_id
   when SeatBooked
-    cart.add_seat(event.seat_id, event.price)
+    booking.add_seat(event.seat_id, event.price)
   when BookingPlaced
-    cart.status = :placed
+    booking.status = :placed
   end
 
-  cart
+  booking
 end
 
 booking_stream = []
@@ -41,15 +41,15 @@ booking_stream << SeatBooked.new(booking_id:, seat_id: 'F4', price: 10, timestam
 booking_stream << SeatBooked.new(booking_id:, seat_id: 'F5', price: 15, timestamp: Time.now)
 booking_stream << BookingPlaced.new(booking_id:, timestamp: Time.now)
 
-cart = Cart.build
-cart = booking_stream.reduce(cart) do |crt, event|
-  evolve(crt, event)
+booking = Booking.build
+booking = booking_stream.reduce(booking) do |bk, event|
+  evolve(bk, event)
 end
-# cart = booking_stream.reduce(cart, &method(:evolve))
+# booking = booking_stream.reduce(booking, &method(:evolve))
 puts
-puts "+++ Cart Details +++"
-puts "Booking: '#{cart.booking_id}'"
-cart.seats.values.each do |s|
+puts "+++ Booking Details +++"
+puts "Booking: '#{booking.booking_id}'"
+booking.seats.values.each do |s|
   puts "* Seat #{s.id} +£#{s.price}"
 end
-puts "Total: £#{cart.total}"
+puts "Total: £#{booking.total}"
