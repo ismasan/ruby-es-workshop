@@ -65,4 +65,13 @@ class FSStore
       @store[:streams][stream_id] || []
     end
   end
+
+  # List every known stream id.
+  #
+  # @return [Array<String>] the stream identifiers in insertion order
+  def all_streams
+    @store.transaction(true) do
+      @store[:streams].keys
+    end
+  end
 end
