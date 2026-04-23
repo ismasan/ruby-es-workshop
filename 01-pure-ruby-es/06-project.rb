@@ -107,7 +107,7 @@ class HTMLProjector
       view.booking_id = event.booking_id
       view.showing_id = event.showing_id
       view.status = :started
-    when SeatBooked
+    when SeatSelected
       view.seats[event.seat_id] = { id: event.seat_id, price: event.price }
     when BookingPlaced
       view.status = :placed

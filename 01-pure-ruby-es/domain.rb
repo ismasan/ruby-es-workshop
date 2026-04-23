@@ -3,8 +3,8 @@
 StartBooking = Data.define(:booking_id, :showing_id)
 BookingStarted = Data.define(:booking_id, :showing_id, :timestamp)
 
-BookSeat = Data.define(:booking_id, :seat_id, :price)
-SeatBooked = Data.define(:booking_id, :seat_id, :price, :timestamp)
+SelectSeat = Data.define(:booking_id, :seat_id, :price)
+SeatSelected = Data.define(:booking_id, :seat_id, :price, :timestamp)
 
 PlaceBooking = Data.define(:booking_id)
 BookingPlaced = Data.define(:booking_id, :timestamp)
@@ -29,7 +29,7 @@ def evolve(booking, event)
     booking.status = :started
     booking.booking_id = event.booking_id
     booking.showing_id = event.showing_id
-  when SeatBooked
+  when SeatSelected
     booking.add_seat(event.seat_id, event.price)
   when BookingPlaced
     booking.status = :placed
@@ -49,10 +49,10 @@ def decide(booking, command)
 
     BookingStarted.new(timestamp:, **command.to_h)
 
-  when BookSeat
+  when SelectSeat
     raise 'Seat already booked' if booking.seats.key?(command.seat_id)
 
-    SeatBooked.new(timestamp:, **command.to_h)
+    SeatSelected.new(timestamp:, **command.to_h)
 
   when PlaceBooking
     raise 'Booking already placed' if booking.status == :placed
