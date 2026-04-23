@@ -55,6 +55,12 @@ class Subscriptions
     end
   end
 
+  def reset(subscriber_id)
+    @store.transaction do
+      @store[:subscribers][subscriber_id] = Subscriber.new(subscriber_id, {})
+    end
+  end
+
   private
 
   def poll(subscriber_id, sub)
