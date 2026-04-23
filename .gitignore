@@ -1,2 +1,5 @@
-events.pstore
+store/events.pstore
 .claude
+02-sourced/storage/*
+02-sourced/.env
+projections/*

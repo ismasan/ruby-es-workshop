@@ -1,0 +1,21 @@
+# frozen_string_literal: true
+
+source "https://rubygems.org"
+
+gem 'falcon'
+gem 'phlex'
+gem 'zeitwerk'
+gem 'dotenv'
+gem 'concurrent-ruby'
+gem 'sequel'
+gem 'brotli'
+gem 'sqlite3'
+gem 'sourced', github: 'ismasan/sourced', branch: 'ccc'
+gem 'sidereal', github: 'ismasan/sidereal'
+gem 'sourced-ui', github: 'ismasan/sourced-ui', branch: 'ccc'
+gem 'rake'
+
+group :test do
+  gem 'rspec'
+  gem 'debug'
+end

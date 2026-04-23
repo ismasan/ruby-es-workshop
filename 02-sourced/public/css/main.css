@@ -1,0 +1,713 @@
+:root {
+  --seat-size: 38px;
+  --seat-gap: 6px;
+  --seat-radius: 7px 7px 3px 3px;
+  --aisle-width: 16px;
+  --row-gap: 6px;
+  --screen-height: 32px;
+  --screen-gap: 24px;
+  --title-size: 18px;
+  --screen-font: 11px;
+  --row-label-size: 12px;
+  --price-font: 9px;
+  --nav-height: 45px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+@media (min-width: 768px) {
+  .layout {
+    flex-direction: row;
+  }
+}
+
+.screen-layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--screen-gap);
+  flex: 1;
+  padding: 20px 8px;
+}
+
+@media (min-width: 1200px) {
+  .screen-layout {
+    padding: 40px 20px;
+  }
+}
+
+/* Sidebar */
+.sidebar {
+  background: #16162a;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .sidebar {
+    border-left: 1px solid #2a2a44;
+    width: 300px;
+    flex-shrink: 0;
+  }
+}
+
+.sidebar h2 {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #8888aa;
+  margin-bottom: 16px;
+}
+
+.booking-seats {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.booking-seat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  padding: 6px 8px;
+  background: #1e1e34;
+  border-radius: 4px;
+}
+
+.booking-seat__id {
+  color: #0fa4a8;
+  font-weight: 500;
+}
+
+.booking-seat__price {
+  color: #8888aa;
+}
+
+.booking-footer {
+  margin-top: auto;
+}
+
+.booking-divider {
+  border: none;
+  border-top: 1px solid #2a2a44;
+  margin: 4px 0 12px;
+}
+
+.booking-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+
+.booking-total__label {
+  color: #8888aa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 12px;
+}
+
+.booking-total__price {
+  color: #e0e0e0;
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.booking-count {
+  font-size: 12px;
+  color: #555570;
+  margin-bottom: 12px;
+}
+
+.timer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  margin-bottom: 20px;
+  background: #1e1e34;
+  border: 1px solid #2a2a44;
+  border-radius: 6px;
+}
+
+.timer__label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #555570;
+}
+
+.timer__value {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ff9800;
+}
+
+.checkout-btn {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 10px;
+  background: #0d7377;
+  border: 1px solid #0fa4a8;
+  border-radius: 6px;
+  color: #e0e0e0;
+  font: inherit;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.checkout-btn:hover {
+  background: #0fa4a8;
+}
+
+h1 {
+  font-size: var(--title-size);
+  font-weight: 400;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #8888aa;
+}
+
+/* Screen */
+/* 10 seats + 9 gaps + aisle + row label */
+.screen {
+  width: calc(10 * var(--seat-size) + 9 * var(--seat-gap) + var(--aisle-width) + 24px);
+  max-width: 90%;
+  height: var(--screen-height);
+  background: linear-gradient(180deg, #ffffff22, #ffffff08);
+  border: 1px solid #ffffff18;
+  border-radius: 50% / 100% 100% 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--screen-font);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #666680;
+  margin-bottom: 16px;
+}
+
+/* Seating area */
+.seating {
+  display: flex;
+  flex-direction: column;
+  gap: var(--row-gap);
+  align-items: center;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--seat-gap);
+}
+
+.row-label {
+  width: 24px;
+  text-align: center;
+  font-size: var(--row-label-size);
+  color: #555570;
+  flex-shrink: 0;
+}
+
+.seats {
+  display: flex;
+  gap: var(--seat-gap);
+  align-items: center;
+}
+
+.aisle {
+  width: var(--aisle-width);
+}
+
+/* Seat base */
+.seat {
+  width: var(--seat-size);
+  height: var(--seat-size);
+  border-radius: var(--seat-radius);
+  cursor: default;
+  transition: transform 0.1s;
+  position: relative;
+}
+
+/* Fan-out: rows get progressively wider spacing */
+.row[data-row="E"] .seats,
+.row[data-row="F"] .seats,
+.row[data-row="G"] .seats,
+.row[data-row="H"] .seats { gap: calc(var(--seat-gap) + 1px); }
+
+.row[data-row="G"] .seats,
+.row[data-row="H"] .seats { gap: calc(var(--seat-gap) + 2px); }
+
+/* Form/button resets */
+form.seat {
+  margin: 0;
+  padding: 0;
+}
+
+.seat button {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border-radius: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--price-font);
+  line-height: 1;
+}
+
+.seat--available button {
+  color: #6a6a88;
+}
+
+.seat--selected button {
+  color: #b2ebf2;
+}
+
+/* Seat states */
+.seat--available {
+  background: #2a2a40;
+  border: 1px solid #3a3a55;
+}
+
+.seat--available:hover {
+  background: #3a3a55;
+  transform: scale(1.1);
+}
+
+.seat--unavailable {
+  background: #c0392b33;
+  border: 1px solid #c0392b66;
+}
+
+.seat--selected {
+  background: #0d7377;
+  border: 1px solid #0fa4a8;
+  box-shadow: 0 0 8px #0d737744;
+}
+
+.seat--selected:hover {
+  background: #0fa4a8;
+  transform: scale(1.1);
+}
+
+/* Wheelchair accessible */
+.seat--accessible {
+  position: relative;
+}
+
+.seat--accessible button {
+  flex-direction: column;
+  gap: 1px;
+}
+
+.seat--accessible button::after {
+  content: "\267F";
+  font-size: calc(var(--seat-size) * 0.4);
+  line-height: 1;
+  color: #8888aa;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  gap: 24px;
+  margin-top: 12px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #8888aa;
+}
+
+.legend-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px 4px 2px 2px;
+}
+
+.legend-swatch--available {
+  background: #2a2a40;
+  border: 1px solid #3a3a55;
+}
+
+.legend-swatch--unavailable {
+  background: #c0392b33;
+  border: 1px solid #c0392b66;
+}
+
+.legend-swatch--selected {
+  background: #0d7377;
+  border: 1px solid #0fa4a8;
+}
+
+/* Scale up on larger screens */
+@media (min-width: 1200px) {
+  :root {
+    --seat-size: 42px;
+    --seat-gap: 8px;
+    --seat-radius: 8px 8px 4px 4px;
+    --aisle-width: 22px;
+    --row-gap: 8px;
+    --screen-height: 40px;
+    --screen-gap: 32px;
+    --title-size: 22px;
+    --screen-font: 13px;
+    --row-label-size: 14px;
+    --price-font: 11px;
+  }
+}
+
+@media (min-width: 1600px) {
+  :root {
+    --seat-size: 52px;
+    --seat-gap: 10px;
+    --seat-radius: 10px 10px 5px 5px;
+    --aisle-width: 28px;
+    --row-gap: 10px;
+    --screen-height: 48px;
+    --screen-gap: 40px;
+    --title-size: 26px;
+    --screen-font: 15px;
+    --row-label-size: 16px;
+    --price-font: 13px;
+  }
+}
+/* Film bar */
+.film-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  background: #16162a;
+  border-bottom: 1px solid #2a2a44;
+}
+
+.film-bar__poster {
+  width: 48px;
+  height: 68px;
+  background: #2a2a44;
+  border-radius: 4px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #555570;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  overflow: hidden;
+}
+
+.film-bar__poster-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.film-bar__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.film-bar__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #e0e0e0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.film-bar__details {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: #8888aa;
+  flex-wrap: wrap;
+}
+
+.film-bar__detail {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.film-bar__detail-label {
+  color: #555570;
+}
+
+/* Top nav */
+.top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--nav-height);
+  padding: 0 20px;
+  background: #12121f;
+  border-bottom: 1px solid #2a2a44;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.top-nav__brand {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0fa4a8;
+  text-decoration: none;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.top-nav__links {
+  display: flex;
+  gap: 24px;
+  list-style: none;
+}
+
+.top-nav__links a {
+  font-size: 13px;
+  color: #8888aa;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.top-nav__links a:hover {
+  color: #e0e0e0;
+}
+
+/* Day picker */
+.day-picker {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  position: sticky;
+  top: var(--nav-height);
+  z-index: 99;
+  background: #1a1a2e;
+  padding: 12px 0;
+  margin: -12px 0;
+}
+
+.day-picker::-webkit-scrollbar {
+  display: none;
+}
+
+.day-picker__link {
+  padding: 8px 16px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #8888aa;
+  text-decoration: none;
+  background: #1e1e34;
+  border: 1px solid #2a2a44;
+  border-radius: 20px;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.day-picker__link:hover {
+  color: #e0e0e0;
+  border-color: #3a3a55;
+  background: #2a2a40;
+}
+
+.day-picker__link--active {
+  color: #e0e0e0;
+  background: #0d7377;
+  border-color: #0fa4a8;
+}
+
+.day-picker__link--active:hover {
+  background: #0fa4a8;
+}
+
+/* Showings page */
+.showings-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* Movie card */
+.movie-card {
+  display: flex;
+  gap: 16px;
+  padding: 20px;
+  background: #16162a;
+  border: 1px solid #2a2a44;
+  border-radius: 8px;
+}
+
+.movie-card__poster {
+  width: 120px;
+  aspect-ratio: 2 / 3;
+  background: #2a2a44;
+  border-radius: 4px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  color: #555570;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  overflow: hidden;
+}
+
+.movie-card__poster-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.movie-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  flex: 1;
+}
+
+.movie-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.movie-card__title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #e0e0e0;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.movie-card__description {
+  font-size: 13px;
+  color: #8888aa;
+  line-height: 1.4;
+}
+
+.movie-card__duration {
+  font-size: 12px;
+  color: #555570;
+}
+
+/* Showings row */
+.showings {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+
+/* Showing box */
+.showing-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 14px;
+  background: #1e1e34;
+  border: 1px solid #2a2a44;
+  border-radius: 6px;
+  text-decoration: none;
+  color: #e0e0e0;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.showing-box:hover {
+  border-color: #0fa4a8;
+  background: #1a1a30;
+}
+
+.showing-box__times {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.showing-box__end-time {
+  color: #555570;
+}
+
+.showing-box__meta {
+  display: flex;
+  gap: 10px;
+  font-size: 11px;
+  color: #8888aa;
+}
+
+.showing-box--low-availability {
+  border-color: #5a3a2a;
+  background: #1e1a18;
+}
+
+.showing-box--low-availability .showing-box__seats {
+  color: #c47a5a;
+}
+
+.showing-box--low-availability:hover {
+  border-color: #7a4a30;
+  background: #241e1a;
+}
+
+.showing-box__price {
+  color: #0fa4a8;
+}
