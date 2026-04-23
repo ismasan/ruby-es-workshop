@@ -94,7 +94,7 @@ store = FSStore.new(fresh_dir)
 store.append('s1', :before_a)
 store.append('s1', :before_b)
 received = []
-thread = store.subscribe('sub-1') { |sid, event| received << [sid, event] }
+thread = store.subscriptions.subscribe('sub-1') { |sid, event| received << [sid, event] }
 wait_until { received.size >= 2 }
 store.append('s1', :after_a)
 store.append('s2', :after_b)
@@ -116,7 +116,7 @@ store.append('s2', :x)
 received = []
 attempts = Hash.new(0)
 thread = silence_stderr do
-  t = store.subscribe('sub-2') do |sid, event|
+  t = store.subscriptions.subscribe('sub-2') do |sid, event|
     attempts[[sid, event]] += 1
     raise 'boom' if event == :bad
 
@@ -135,7 +135,7 @@ puts 'subscriber offsets persist across instances'
 resume = FSStore.new(dir)
 resumed = []
 thread = silence_stderr do
-  t = resume.subscribe('sub-2') do |sid, event|
+  t = resume.subscriptions.subscribe('sub-2') do |sid, event|
     raise 'boom' if event == :bad
 
     resumed << [sid, event]
