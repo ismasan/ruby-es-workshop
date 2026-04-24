@@ -11,7 +11,7 @@ module Pages
 
       movie = Catalog.find_movie(showing.movie_id)
       template = Catalog.screen_template(showing.screen_id)
-      view, _ = Sourced.load(SeatsHeld, showing_id: showing_id)
+      view, _ = Sourced.load(BookingView, showing_id: showing_id)
       screen = Screen.from_template(template, held: view.state[:held], current_booking_id: app.booking_id)
 
       new(movie: movie, showing: showing, screen: screen, booking_id: app.booking_id)

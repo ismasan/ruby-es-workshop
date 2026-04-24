@@ -5,8 +5,8 @@
 # Reads events for one showing using AND-filtered partition reads, then
 # evolves them into a {seat_id => booking_id} map. Not registered with
 # Sourced and has no `sync` block, so no worker runs and no state is
-# persisted — used purely on demand via `Sourced.load(SeatsHeld, ...)`.
-class SeatsHeld < Sourced::Projector::EventSourced
+# persisted — used purely on demand via `Sourced.load(BookingView, ...)`.
+class BookingView < Sourced::Projector::EventSourced
   partition_by :showing_id
 
   state do |values|
