@@ -69,11 +69,16 @@ class BookingApp
   end
 
   def handle(command)
+    # 1. read past events for @stream_id
     booking_stream = @store.read(@stream_id)
+    # 2. reduce events and evolve booking state
     booking = booking_stream.reduce(Booking.build, &method(:evolve))
+    # 3. pass booking and command to decide function
     new_event = decide(booking, command)
+    # 4. evolve new event to get up-to-date state
     booking = evolve(booking, new_event)
-    # transation here
+
+    # 5. append new event to store
     if new_event
       @store.append(@stream_id, new_event) 
     end

@@ -19,6 +19,7 @@
 class MemStore
   def initialize
     @log = Hash.new { |h, k| h[k] = [] }
+    @reactions = []
   end
 
   # Append an event to a stream.
@@ -27,7 +28,10 @@ class MemStore
   # @param event [Object] any event object
   # @return [Integer] the new stream size (version)
   def append(stream_id, event)
+    # transaction
     @log[stream_id] << event
+    @reactions.each { |r| r.call(stream_id, event) }
+    # /transaction
 
     @log[stream_id].size
   end
@@ -38,5 +42,11 @@ class MemStore
   # @return [Array<Object>] the events in append order (empty if the stream is unknown)
   def read(stream_id)
     @log[stream_id]
+  end
+
+  def reaction(r = nil, &block)
+    r ||= block
+    @reactions << r
+    self
   end
 end
