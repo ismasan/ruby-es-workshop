@@ -43,6 +43,5 @@ Sidereal.configure do |config|
 end
 
 Sourced.register(SeatSelection)
-Sourced.register(SeatsHeld)
 
 Zeitwerk::Loader.eager_load_all if ENV['RACK_ENV'] == 'production'

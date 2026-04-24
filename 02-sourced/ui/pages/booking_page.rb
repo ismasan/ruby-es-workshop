@@ -11,13 +11,13 @@ module Pages
 
       movie = Catalog.find_movie(showing.movie_id)
       template = Catalog.screen_template(showing.screen_id)
-      held = SeatsHeld.for_showing(showing_id)
-      screen = Screen.from_template(template, held: held, current_booking_id: app.booking_id)
+      view, _ = Sourced.load(SeatsHeld, showing_id: showing_id)
+      screen = Screen.from_template(template, held: view.state[:held], current_booking_id: app.booking_id)
 
       new(movie: movie, showing: showing, screen: screen, booking_id: app.booking_id)
     end
 
-    on SeatsHeld::Updated do |evt|
+    on SeatSelection::Updated do |evt|
       next unless evt.payload.showing_id == params[:showing_id]
       browser.patch_elements load(params)
     end
