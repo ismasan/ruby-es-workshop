@@ -11,6 +11,7 @@ Signal.trap('INT') do
 end
 
 emails = STORE.subscriptions.subscribe 'emails' do |stream_id, event|
+  sleep rand(0.01..1)
   p [:emails, stream_id, event]
 end
 

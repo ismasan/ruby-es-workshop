@@ -23,49 +23,74 @@ class Booking < Struct.new(:status, :booking_id, :showing_id, :seats, keyword_in
   def total = seats.values.sum(&:price)
 end
 
-def evolve(booking, event)
-  case event
-  when BookingStarted
-    booking.status = :started
-    booking.booking_id = event.booking_id
-    booking.showing_id = event.showing_id
-  when SeatSelected
-    booking.add_seat(event.seat_id, event.price)
-  when BookingPlaced
-    booking.status = :placed
+class BookingApp
+  def initialize(stream_id, store)
+    @stream_id = stream_id
+    @store = store
   end
 
-  booking
-end
+  def evolve(booking, event)
+    case event
+    when BookingStarted
+      booking.status = :started
+      booking.booking_id = event.booking_id
+      booking.showing_id = event.showing_id
+    when SeatSelected
+      booking.add_seat(event.seat_id, event.price)
+    when BookingPlaced
+      booking.status = :placed
+    end
 
-# (booking, command) => event
-def decide(booking, command)
-  timestamp = Time.now
-
-  case command
-  when StartBooking
-    raise 'Booking already started' if booking.status == :started
-    raise 'Booking already placed' if booking.status == :placed
-
-    BookingStarted.new(timestamp:, **command.to_h)
-
-  when SelectSeat
-    raise 'Seat already booked' if booking.seats.key?(command.seat_id)
-
-    SeatSelected.new(timestamp:, **command.to_h)
-
-  when PlaceBooking
-    raise 'Booking already placed' if booking.status == :placed
-    raise 'No seats booked!' if booking.seats.size == 0
-
-    BookingPlaced.new(timestamp:, **command.to_h)
+    booking
   end
-end
 
-def handle_command(booking_stream, command)
-  booking = booking_stream.reduce(Booking.build, &method(:evolve))
-  new_event = decide(booking, command)
-  booking_stream << new_event if new_event
-  evolve(booking, new_event)
+  # (booking, command) => event
+  def decide(booking, command)
+    timestamp = Time.now
+
+    case command
+    when StartBooking
+      raise 'Booking already started' if booking.status == :started
+      raise 'Booking already placed' if booking.status == :placed
+
+      BookingStarted.new(timestamp:, **command.to_h)
+
+    when SelectSeat
+      raise 'Seat already booked' if booking.seats.key?(command.seat_id)
+
+      SeatSelected.new(timestamp:, **command.to_h)
+
+    when PlaceBooking
+      raise 'Booking already placed' if booking.status == :placed
+      raise 'No seats booked!' if booking.seats.size == 0
+
+      BookingPlaced.new(timestamp:, **command.to_h)
+    end
+  end
+
+  def handle(command)
+    booking_stream = @store.read(@stream_id)
+    booking = booking_stream.reduce(Booking.build, &method(:evolve))
+    new_event = decide(booking, command)
+    booking = evolve(booking, new_event)
+    # transation here
+    if new_event
+      @store.append(@stream_id, new_event) 
+    end
+
+    booking
+  end
+
+  def start(showing_id:)
+    handle StartBooking.new(booking_id: @stream_id, showing_id:)
+  end
+
+  def select_seat(seat_id:, price:)
+    handle SelectSeat.new(booking_id: @stream_id, seat_id:, price:)
+  end
+
+  def place
+    handle PlaceBooking.new(booking_id: @stream_id)
+  end
 end
 
