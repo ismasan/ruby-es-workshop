@@ -11,10 +11,18 @@ module Pages
 
       movie = Catalog.find_movie(showing.movie_id)
       template = Catalog.screen_template(showing.screen_id)
-      view, _ = Sourced.load(BookingView, showing_id: showing_id)
+      requested_version = params[:version]&.to_i
+      view, events = Sourced.load(BookingView, showing_id: showing_id, upto: requested_version)
       screen = Screen.from_template(template, held: view.state[:held], current_booking_id: app.booking_id)
 
-      new(movie: movie, showing: showing, screen: screen, booking_id: app.booking_id)
+      new(
+        movie: movie,
+        showing: showing,
+        screen: screen,
+        booking_id: app.booking_id,
+        version: events.messages.size,
+        historic: !requested_version.nil?
+      )
     end
 
     on SeatSelection::Updated do |evt|
@@ -22,12 +30,21 @@ module Pages
       browser.patch_elements load(params)
     end
 
-    def initialize(movie:, showing:, screen:, booking_id:)
+    def initialize(movie:, showing:, screen:, booking_id:, version:, historic: false)
       @movie = movie
       @showing = showing
       @screen = screen
       @booking_id = booking_id
+      @version = version
+      @historic = historic
       super()
+    end
+
+    # Suppress the live-update subscription when viewing a historic version,
+    # so the frozen snapshot isn't overwritten by subsequent SeatSelection
+    # events. (Page.subscribe returns early when page_key is absent.)
+    def page_signals
+      @historic ? {} : super
     end
 
     private
@@ -38,7 +55,7 @@ module Pages
       render Components::FilmBar.new(movie: @movie, showing: @showing)
       div(class: 'layout') do
         render Components::Screen.new(showing: @showing, screen: @screen, booking_id: @booking_id)
-        render Components::Cart.new(screen: @screen)
+        render Components::Cart.new(screen: @screen, version: @version)
       end
     end
   end

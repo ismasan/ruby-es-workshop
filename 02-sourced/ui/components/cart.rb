@@ -2,8 +2,9 @@
 
 module Components
   class Cart < Sidereal::Components::BaseComponent
-    def initialize(screen:)
+    def initialize(screen:, version: nil)
       @screen = screen
+      @version = version
     end
 
     def view_template
@@ -11,7 +12,10 @@ module Components
       total = selected.sum(&:price_cents)
 
       aside(class: 'sidebar') do
-        h2 { 'Your Booking' }
+        h2 do
+          plain 'Your Booking'
+          span(class: 'sidebar__version') { "v#{@version}" } if @version
+        end
         p(class: 'booking-count') { "#{selected.size} seats selected" }
         ul(class: 'booking-seats') do
           selected.each do |seat|

@@ -89,6 +89,15 @@ body {
   margin-bottom: 16px;
 }
 
+.sidebar__version {
+  margin-left: 8px;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  text-transform: none;
+  color: #555570;
+}
+
 .booking-seats {
   list-style: none;
   display: flex;
